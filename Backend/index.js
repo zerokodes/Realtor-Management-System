@@ -15,6 +15,7 @@ dotenv.config();
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/auth", authRoute);
 
+//middleware
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 

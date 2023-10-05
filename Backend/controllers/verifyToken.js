@@ -45,9 +45,19 @@ function verifyHQAdmin(roles){
     }
 }
 
+function verifyBranchAdmin(roles){
+    return (req,res,next) => {
+        if(!roles.includes(req.user.role)){
+           return res.status(403).json("Yon are not Authorized");
+        }
+        next();
+    }
+}
+
 module.exports = { 
     verifyToken, 
     verifyTokenAndAuthorization,
     //verifyTokenAndAdmin,
     verifyHQAdmin,
+    verifyBranchAdmin,
 };
