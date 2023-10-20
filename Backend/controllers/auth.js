@@ -40,7 +40,8 @@ const createUser = asyncWrapper(async (req, res) => {
     //Assigning token to users
     const accessToken = jwt.sign({
         id: user._id,
-        role: user.role
+        role: user.role,
+        branchPlacement: user.branchPlacement
     }, 
     process.env.JWT_SEC,
     {expiresIn: "3d"}

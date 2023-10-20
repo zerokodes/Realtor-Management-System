@@ -10,16 +10,21 @@ const getAllUsers = asyncWrapper(async (req, res) => {
 
 //GET all users from a branch
 const getAllUsersFromABranch = asyncWrapper(async (req, res, next) => {
-  const branchPlacement = req.query.branchPlacement;
+  const branch = req.query.branchPlacement;
+  const usersBranchPlacement = req.user.branchPlacement;
+  const HQ = "HQ";
 
-  if (!branchPlacement) {
+  if (!branch) {
    return next(createCustomError('Branch parameter is required.', 400));
   }
-  console.log(branchPlacement)
-  const users = await User.find({branchPlacement});
+  if(!branch.includes(usersBranchPlacement) && !HQ.includes(usersBranchPlacement)){
+    return next(createCustomError('Yon are not Authorized to see users in this branch .', 403));
+  }
+  
+  const users = await User.find({ branchPlacement: branch });
 
   if (users.length === 0) {
-    return next(createCustomError(`No User found in this branch : ${branchPlacement}`, 404));
+    return next(createCustomError(`No User found in this branch : ${branch}`, 404));
   }
   res.status(200).json({ users });
 });
