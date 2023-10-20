@@ -34,9 +34,15 @@ const getAllUsersFromABranch = asyncWrapper(async (req, res, next) => {
 const getUser = asyncWrapper(async (req, res, next) => {
   const { id: userID } = req.params;
   const user = await User.findOne({ _id: userID });
+  const HQ = "HQ";
+  const usersBranchPlacement = req.user.branchPlacement;
+
+  if(!user.branchPlacement.includes(usersBranchPlacement) && !HQ.includes(usersBranchPlacement)){
+    return next(createCustomError('Yon are not Authorized to see users in this branch .', 403));
+  }
 
   if (!user) {
-    return next(createCustomError(`No task found with id : ${userID}`, 404));
+    return next(createCustomError(`No user found with id : ${userID}`, 404));
   }
 
   res.status(200).json({ user });
