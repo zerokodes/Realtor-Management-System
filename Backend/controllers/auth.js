@@ -20,7 +20,7 @@ const createUser = asyncWrapper(async (req, res) => {
   });
 
   // LOGIN user
-  const loginUser = asyncWrapper(async (req, res) => {
+  const loginUser = asyncWrapper(async (req, res, next) => {
     const user = await User.findOne({ username: req.body.username});
     if (!user) {
         return next(createCustomError("Wrong Crendentials", 401));

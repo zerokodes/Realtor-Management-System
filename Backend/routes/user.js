@@ -13,5 +13,6 @@ const {
 
 router.route("/").get(verifyToken,verifyHQAdmin('HQAdmin'),getAllUsers)
 router.route("/branchUsers").get(verifyToken,verifyBranchAdminAndHQAdmin('BranchAdmin','HQAdmin'),getAllUsersFromABranch)
-router.route("/:id").get(verifyToken,verifyBranchAdminAndHQAdmin('BranchAdmin','HQAdmin'),getUser).patch(updateUser).delete(deleteUser);
+router.route("/:id").get(verifyToken,verifyBranchAdminAndHQAdmin('BranchAdmin','HQAdmin'),getUser)
+.patch(verifyToken,updateUser).delete(verifyToken,deleteUser);
 module.exports = router;

@@ -51,28 +51,50 @@ const getUser = asyncWrapper(async (req, res, next) => {
 
 // UPDATE a  User
 
-const updateUser = asyncWrapper(async (req, res) => {
+const updateUser = asyncWrapper(async (req, res, next) => {
   const { id: userID } = req.params;
-  const user = await User.findOneAndUpdate({ _id: userID }, req.body, {
+  let searchUser = await User.findOne({ _id: userID });
+  const HQ = "HQ";
+  const usersBranchPlacement = req.user.branchPlacement;
+  if (!searchUser) {
+    return next(createCustomError(`No user found with id : ${userID}`, 404));
+  }
+  if (searchUser.id !== req.user.id && !HQ.includes(usersBranchPlacement) && req.user.role !== "BranchAdmin") {
+    return next(createCustomError('Yon are not Authorized to update this users details .', 403));
+  }
+  if (req.user.role === "BranchAdmin"){
+      if (searchUser.branchPlacement !== req.user.branchPlacement){
+        return next(createCustomError('Yon are not Authorized to update this users details .', 403));
+      }
+  }
+  searchUser = await User.findOneAndUpdate({ _id: userID }, req.body, {
     new: true,
     runValidators: true,
   });
-  if (!user) {
-    return next(createCustomError(`No task found with id : ${userID}`, 404));
-  }
-  res.status(200).json({ user });
+  res.status(200).json({ searchUser });
 });
 
 // DELETE a user
 
-const deleteUser = asyncWrapper(async (req, res) => {
+const deleteUser = asyncWrapper(async (req, res, next) => {
   const { id: userID } = req.params;
-  const user = await User.findOneAndDelete({ _id: userID });
-
-  if (!user) {
-    return next(createCustomError(`No task found with id : ${userID}`, 404));
+  let searchUser = await User.findOne({ _id: userID });
+  const HQ = "HQ";
+  const usersBranchPlacement = req.user.branchPlacement;
+  if (!searchUser) {
+    return next(createCustomError(`No user found with id : ${userID}`, 404));
   }
-  res.status(200).json({ user });
+  if (searchUser.id !== req.user.id && !HQ.includes(usersBranchPlacement) && req.user.role !== "BranchAdmin") {
+    return next(createCustomError('Yon are not Authorized to delete this user .', 403));
+  }
+  if (req.user.role === "BranchAdmin"){
+      if (searchUser.branchPlacement !== req.user.branchPlacement){
+        return next(createCustomError('Yon are not Authorized to delete this user .', 403));
+      }
+  }
+  searchUser = await User.findOneAndDelete({ _id: userID });
+
+  res.status(200).json({ searchUser });
 });
 
 module.exports = {
